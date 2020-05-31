@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,16 @@ import java.util.ArrayList;
 
 public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
     private Context mContext;
+    private OnItemClickListener mListener;
     private ArrayList<ExampleItem> mexampleItems;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener=listener;
+    }
 
 
     public ExampleAdapter(Context context, ArrayList <ExampleItem> exampleItems){
@@ -34,6 +44,19 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
             mimageView=itemView.findViewById(R.id.imageview);
             mname=itemView.findViewById(R.id.imagename);
             mlike=itemView.findViewById(R.id.like);
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                     if(mListener!=null){
+                         int position =getAdapterPosition() ;
+                         if(position!= RecyclerView.NO_POSITION){
+                             mListener.onItemClick(position);
+                         }
+                     }
+                }
+            });
 
         }
     }
@@ -56,7 +79,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
 
           holder.mname.setText(creatorName);
           holder.mlike.setText("Likes "+likes);
-        Picasso.get().load(imageUrl).centerInside().into(holder.mimageView);
+        Picasso.get().load(imageUrl).into(holder.mimageView);
 
     }
 
@@ -64,6 +87,6 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mexampleItems.size();
     }
 }

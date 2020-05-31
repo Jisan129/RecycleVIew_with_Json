@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.textclassifier.TextLinks;
 
@@ -20,8 +21,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements ExampleAdapter.OnItemClickListener {
+    public static final String EXTRA_URL ="imageUrl";
+    public static final String EXTRA_CREATOR="creatorName";
+    public static final String EXTRA_LIKES="likeCount";
     private RecyclerView mRecycleView;
     private ExampleAdapter mexampleAdapter;
     private ArrayList<ExampleItem> mexampleItems;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             mexampleAdapter =new ExampleAdapter(MainActivity.this,mexampleItems);
                             mRecycleView.setAdapter(mexampleAdapter);
+                            mexampleAdapter.setOnItemClickListener(MainActivity.this);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -78,5 +82,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
          requestQueue.add(request);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent detailIntent = new Intent(this,DetailActivity.class);
+        ExampleItem clickedItem=mexampleItems.get(position);
+
+        detailIntent.putExtra(EXTRA_URL,clickedItem.getMimageId());
+        detailIntent.putExtra(EXTRA_CREATOR,clickedItem.getMimageName());
+        detailIntent.putExtra(EXTRA_LIKES,clickedItem.getMlikes());
+
+        startActivity(detailIntent);
     }
 }
